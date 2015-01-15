@@ -1,1 +1,1 @@
-AUTH_TOKEN = "test"
+AUTH_TOKEN = "test2"
