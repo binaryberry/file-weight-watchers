@@ -1,8 +1,9 @@
 require 'sinatra'
-require 'songkick/oauth2/provider'
-Songkick::OAuth2::Provider.realm = 'Fileww'
+require 'json'
+require 'rest-client'
 
-app_uid = ENV['WORKSHARE_API_KEY']
+require_relative './lib/user.rb'
+
 
 class Fileww < Sinatra::Application
 
@@ -15,14 +16,18 @@ class Fileww < Sinatra::Application
 	end
 
 	post '/session' do
-			erb :"sessions/new"
-			# email, password = params[:email], params[:password]
-			# user = User.authenticate(email, password)
-			# if user
-			# 	session[:user_id] = user.id
-			# 	redirect to('/')
-			# else
-			# 	flash[:errors] = ["The email or password is incorrect"]
-			# end
+	app_uid = ENV['WORKSHARE_API_KEY']
+	email, password = params[:email], params[:password]
+	user = User.find_by_username(email, password)
+	token = Songkick::OAuth2::Provider.access_token(user, ['files'], app_uid)
+	
+  	headers token.response_headers
+  	status  token.response_status
+
+  	if token.valid?
+    	JSON.unparse('files' => user.files)
+  	else
+    	JSON.unparse('error' => 'No files for you!')
+  	end
 	end
 end
