@@ -8,6 +8,8 @@ gem 'rack-flash3'
 gem 'sinatra'
 gem 'shotgun'
 gem 'sinatra-partial'
+gem 'sinatra-contrib'
+gem 'sinatra-base'
 
 group :development, :test do
 	gem 'capybara'
